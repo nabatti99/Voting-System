@@ -39,6 +39,7 @@ namespace Voting_System.Views.Components
                 totalNumVotes += candidate.NUM_VOTES;
 
             lbTitle.Text = voteEvent.TITLE;
+            lbDate.Text = voteEvent.END_DATE.ToShortDateString();
             lbNumVoteTurns.Text = $"{totalNumVotes} phiếu";
         }
 

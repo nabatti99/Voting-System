@@ -36,6 +36,8 @@ namespace Voting_System.Views
 
             candidates = new List<Candidate>();
             voteTurns = new List<VoteTurn>();
+
+            this.Text = $"{voteEvent.TITLE} ({voteEvent.BEGIN_DATE.ToShortDateString()} - {voteEvent.END_DATE.ToShortDateString()})";
         }
 
         public async Task Render()

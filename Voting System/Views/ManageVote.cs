@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Voting_System.Models;
@@ -19,6 +20,23 @@ namespace Voting_System.Views
         private List<VoteTurn> voteTurns;
         private List<Candidate> candidates;
         private int currentCandidateId;
+
+        public const string KEY = "Vot3";
+        private static byte[] hashKey;
+        private static ICryptoTransform encryptor;
+
+        static ManageVote()
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            hashKey = Encoding.UTF8.GetBytes(KEY);
+            hashKey = md5.ComputeHash(hashKey);
+
+            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
+            tripleDES.Key = hashKey;
+            tripleDES.Mode = CipherMode.ECB;
+
+            encryptor = tripleDES.CreateEncryptor();
+        }
 
         public ManageVote(VoteEvent voteEvent)
         {
@@ -205,9 +223,17 @@ namespace Voting_System.Views
             }
         }
 
-        private void btnGetCode_Click(object sender, EventArgs e)
+        private async void btnGetCode_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(voteEvent.ID.ToString());
+            byte[] data = Encoding.UTF8.GetBytes(voteEvent.ID.ToString());
+            byte[] hashedData = encryptor.TransformFinalBlock(data, 0, data.Length);
+            Clipboard.SetText(Convert.ToBase64String(hashedData));
+
+            btnGetCode.Text = "Đã copy mã";
+            btnGetCode.Enabled = false;
+            await Task.Delay(1000);
+            btnGetCode.Text = "Lấy mã bầu cử";
+            btnGetCode.Enabled = true;
         }
     }
 }

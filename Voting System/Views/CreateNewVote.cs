@@ -23,6 +23,7 @@ namespace Voting_System.Views
 
             dtpEndTime.Format = DateTimePickerFormat.Time;
             dtpEndTime.ShowUpDown = true;
+            dtpEndDate.Value += TimeSpan.FromDays(10);
         }
 
         private async void btnCreate_Click(object sender, EventArgs e)
@@ -71,12 +72,6 @@ namespace Voting_System.Views
 
                 DateTime beginDate = dtpBeginDate.Value.Date + dtpBeginTime.Value.TimeOfDay;
                 DateTime endDate = dtpEndDate.Value.Date + dtpEndTime.Value.TimeOfDay;
-
-                if (beginDate < DateTime.Now)
-                {
-                    dtpBeginDate.Focus();
-                    throw new Exception("Thời gian bắt đầu bầu cử phải là tương lai");
-                }
 
                 if (endDate <= beginDate)
                 {

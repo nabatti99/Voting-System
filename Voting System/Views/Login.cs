@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using Voting_System;
 using Voting_System.Models;
 using Voting_System.Controllers;
+using System.Text.RegularExpressions;
 
 namespace Voting_System.Views
 {
     public partial class Login : Form
     {
+        private Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+
         public Login()
         {
             InitializeComponent();
@@ -24,8 +27,12 @@ namespace Voting_System.Views
         {
             btnLogin.Text = "Đang đăng nhập";
             btnLogin.Enabled = false;
+
             try
             {
+                if (!emailRegex.IsMatch(tbEmail.Text))
+                    throw new Exception("Hãy nhập đúng email");
+
                 await LoginController.Login(tbEmail.Text, tbPassword.Text);
                 Program.Navigate(new Home());
             } catch (Exception error)

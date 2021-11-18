@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Voting_System.Models;
@@ -15,6 +16,22 @@ namespace Voting_System.Views
     public partial class EnterCode : Form
     {
         private AppUser appUser;
+
+        private static byte[] hashKey;
+        private static ICryptoTransform decryptor;
+
+        static EnterCode()
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            hashKey = Encoding.UTF8.GetBytes(ManageVote.KEY);
+            hashKey = md5.ComputeHash(hashKey);
+
+            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
+            tripleDES.Key = hashKey;
+            tripleDES.Mode = CipherMode.ECB;
+
+            decryptor = tripleDES.CreateDecryptor();
+        }
 
         public EnterCode(AppUser appUser)
         {
@@ -28,8 +45,12 @@ namespace Voting_System.Views
             btnSubmit.Text = "Đang xử lí";
             btnSubmit.Enabled = false;
 
+            byte[] hashedData = Convert.FromBase64String(tbCode.Text);
+            byte[] data = decryptor.TransformFinalBlock(hashedData, 0, hashedData.Length);
+            string textDecrypted = Encoding.UTF8.GetString(data);
+
             int voteEventId;
-            if (!int.TryParse(tbCode.Text, out voteEventId))
+            if (!int.TryParse(textDecrypted, out voteEventId))
             {
                 MessageBox.Show("Mã bầu cử không hợp lệ");
                 return;
