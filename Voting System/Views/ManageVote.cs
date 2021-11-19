@@ -51,6 +51,12 @@ namespace Voting_System.Views
         {
             lbTitle.Text = voteEvent.TITLE;
             lbDate.Text = $"{voteEvent.BEGIN_DATE} - {voteEvent.END_DATE}";
+
+            if (voteEvent.END_DATE < DateTime.Now)
+            {
+                lbDate.Text += " (Đã hết hạn)";
+            }
+
             ClearTableInformation();
 
             List<int> candidateIds = await GetInfoController.GetCandidateIds(voteEvent.ID);

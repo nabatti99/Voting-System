@@ -50,6 +50,12 @@ namespace Voting_System.Views
                 lbState.Text = $"{voteTurnIds.Count}/{voteEvent.MAX_VOTE_TURN} phiếu";
                 lbState.ForeColor = Color.Orange;
             }
+
+            if (voteEvent.END_DATE < DateTime.Now)
+            {
+                lbState.Text = "Hết hạn";
+                lbState.ForeColor = Color.DarkGray;
+            }
         }
 
         private void VoteItem_MouseEnter(object sender, EventArgs e)

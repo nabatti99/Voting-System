@@ -117,7 +117,11 @@ namespace Voting_System.Views
             lbReason.Text = candidate.REASON;
 
             btnVote.Enabled = true;
-            if (CandidateHasVoted(candidate))
+            if (voteEvent.END_DATE < DateTime.Now)
+            {
+                btnVote.Text = "Đã hết hạn";
+                btnVote.Enabled = false;
+            } else if (CandidateHasVoted(candidate))
             {
                 btnVote.Text = BTN_HAS_VOTED;
             } else if (voteTurns.Count == voteEvent.MAX_VOTE_TURN)
